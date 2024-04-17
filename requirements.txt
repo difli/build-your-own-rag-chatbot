@@ -2,4 +2,3 @@
 streamlit
 ragstack-ai
 pypdf
-langflow==1.0.0a23
