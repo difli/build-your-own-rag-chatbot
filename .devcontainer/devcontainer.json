@@ -18,11 +18,11 @@
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
-		8501
+		8501, 7861
 	],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// Install app dependencies.
-	"postCreateCommand": "pip3 install --user -r requirements.txt",
+	"postCreateCommand": "pip3 install --user -r requirements.txt" && python -m pip install langflow==1.0.0a23 --force-reinstall
 	// Use 'postAttachCommand' to run commands after a tool has attached to the container.
 	// Start the app.
 	"postAttachCommand": {
@@ -32,7 +32,11 @@
 		"8501": {
 			"label": "Application",
 			"onAutoForward": "openPreview"
-		}
+        },
+        "7861": {
+            "label": "LangFlow UI",
+            "onAutoForward": "openBrowser"
+        }
 	},
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode",
