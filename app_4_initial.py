@@ -1,29 +1,57 @@
 import streamlit as st
 
-# TODO: Insert the import statement for `run_flow_from_json` from langflow to enable JSON-based flow execution.
-# This function is crucial for loading flow configurations dynamically.
+# TODO:
+# 1. Copy and paste the necessary code from the langflow Python API tab.
+#    Exclude the last two lines of the provided code; these will be used elsewhere.
+# 2. Ensure the 'TWEAKS' dictionary is fully configured with all required customizations
+#    specific to your flow needs.
 # Example:
-# from langflow.load import run_flow_from_json
-
-# TODO: Insert the tweaks structure for configuring your langflow flow.
-# This structure is used to customize various components of the flow,
-# such as API keys and response formats. Modify the dictionary below
-# as needed to fit your specific requirements.
+# import requests
+# from typing import Optional
 #
-# Example:
+# BASE_API_URL = "http://127.0.0.1:7861/api/v1/run"
+# FLOW_ID = "6e1a0080-46ee-4746-bb85-cea248f54bc0"
+# # You can tweak the flow by adding a tweaks dictionary
+# # e.g {"OpenAI-XXXXX": {"model_name": "gpt-4"}}
 # TWEAKS = {
-#   "Prompt-svuPA": {
-#       "template": """Answer the user as if you were a funny generative AI geek.
-#       User: {user_input}
+#     "Prompt-svuPA": {"template": """Answer the user as if you were a funny generative AI geek.
+#   User: {user_input}
 #
-#       Answer: """
-#   },
-#   "OpenAIModel-RhxsO": {
-#       "openai_api_key": st.secrets['OPENAI_API_KEY']
-#   },
-#   "ChatOutput-wHG84": {},
-#   "ChatInput-jLIhU": {}
+#   Answer: """},
+#     "OpenAIModel-RhxsO": {"openai_api_key": st.secrets['OPENAI_API_KEY']},
+#     "ChatOutput-wHG84": {},
+#     "ChatInput-jLIhU": {}
 # }
+#
+# def run_flow(message: str,
+#   flow_id: str,
+#   output_type: str = "chat",
+#   input_type: str = "chat",
+#   tweaks: Optional[dict] = None,
+#   api_key: Optional[str] = None) -> dict:
+#     """
+#     Run a flow with a given message and optional tweaks.
+#
+#     :param message: The message to send to the flow
+#     :param flow_id: The ID of the flow to run
+#     :param tweaks: Optional tweaks to customize the flow
+#     :return: The JSON response from the flow
+#     """
+#     api_url = f"{BASE_API_URL}/{flow_id}"
+#
+#     payload = {
+#         "input_value": message,
+#         "output_type": output_type,
+#         "input_type": input_type,
+#     }
+#     headers = None
+#     if tweaks:
+#         payload["tweaks"] = tweaks
+#     if api_key:
+#         headers = {"x-api-key": api_key}
+#     response = requests.post(api_url, json=payload, headers=headers)
+#     return response.json()
+#
 
 # Start with empty messages, stored in session state
 if 'messages' not in st.session_state:
@@ -47,19 +75,15 @@ if question := st.chat_input("What's up?"):
     with st.chat_message('human'):
         st.markdown(question)
 
-# TODO: Ensure the 'run_flow_from_json' function is correctly imported from the langflow package.
-# Ensure that the 'BasicPrompting.json' file exists and is properly formatted according to langflow requirements.
-# Verify that 'TWEAKS' dictionary is defined with all necessary customizations for this flow.
+# TODO:
+# 1. Invoke the run_flow function using the provided question, flow_id, and tweaks.
+# 2. Capture and process the output to extract the desired result.
 # Example:
-# from langflow.load import run_flow_from_json
-# Ensure 'question' variable is initialized with the user input that will be passed to the flow.
-#
-# Example of usage:
-# output = run_flow_from_json(flow="BasicPrompting.json",
-#                             input_value=question,
-#                             tweaks=TWEAKS)
+#     output = run_flow(message=question, flow_id=FLOW_ID, tweaks=TWEAKS)
+#     answer = output['outputs'][0]['outputs'][0]['results']['result']
 
-    answer = output[0].outputs[0].results
+    # REPLACE THE FOLLOWING LINE
+    answer = "You asked: " + question
 
     # Store the bot's answer in a session object for redrawing next time
     st.session_state.messages.append({"role": "ai", "content": answer})

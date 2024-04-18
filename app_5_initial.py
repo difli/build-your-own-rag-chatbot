@@ -1,28 +1,84 @@
 import streamlit as st
+import os
+import tempfile
 
-# TODO: Insert the import statement for `run_flow_from_json` from langflow to enable JSON-based flow execution.
-# This function is crucial for loading flow configurations dynamically.
+# TODO:
+# 1. Copy and paste the necessary code from the langflow Python API tab for the Flow: "Chat_app_5".
+#    Exclude the last two lines of the provided code; these will be used elsewhere.
+# 2. Ensure the 'TWEAKS' dictionary is fully configured with all required customizations
+#    specific to your flow needs.
+# Example:
+# import requests
+# from typing import Optional
+#
+# BASE_API_URL = "http://127.0.0.1:7861/api/v1/run"
+# FLOW_ID = "2d0074dc-4994-4259-9c96-0184ed31f25e"
+# # You can tweak the flow by adding a tweaks dictionary
+# # e.g {"OpenAI-XXXXX": {"model_name": "gpt-4"}}
+# TWEAKS = {
+#   "ChatInput-QH9Vn": {},
+#   "TextOutput-rOdzu": {},
+#   "OpenAIEmbeddings-oyXOD": {"openai_api_key": st.secrets['OPENAI_API_KEY']},
+#   "OpenAIModel-1gPW2": {"openai_api_key": st.secrets['OPENAI_API_KEY']},
+#   "Prompt-6uVLA": {"template": """You're a helpful AI assistent tasked to answer the user's questions.
+# You're friendly and you answer extensively with multiple sentences. You prefer to use bulletpoints to summarize.
+#
+# CONTEXT:
+# {context}
+#
+# QUESTION:
+# {question}
+#
+# YOUR ANSWER:"""},
+#   "ChatOutput-OT9zk": {},
+#   "File-icQdf": {},
+#   "RecursiveCharacterTextSplitter-AbAFw": {},
+#   "AstraDBSearch-urw0f": {"api_endpoint": st.secrets['ASTRA_API_ENDPOINT'], "token": st.secrets['ASTRA_TOKEN']},
+#   "AstraDB-SpIGI": {"api_endpoint": st.secrets['ASTRA_API_ENDPOINT'], "token": st.secrets['ASTRA_TOKEN']},
+#   "OpenAIEmbeddings-wTu3X": {"openai_api_key": st.secrets['OPENAI_API_KEY']}
+# }
+#
+# def run_flow(message: str,
+#   flow_id: str,
+#   output_type: str = "chat",
+#   input_type: str = "chat",
+#   tweaks: Optional[dict] = None,
+#   api_key: Optional[str] = None) -> dict:
+#     """
+#     Run a flow with a given message and optional tweaks.
+#
+#     :param message: The message to send to the flow
+#     :param flow_id: The ID of the flow to run
+#     :param tweaks: Optional tweaks to customize the flow
+#     :return: The JSON response from the flow
+#     """
+#     api_url = f"{BASE_API_URL}/{flow_id}"
+#
+#     payload = {
+#         "input_value": message,
+#         "output_type": output_type,
+#         "input_type": input_type,
+#     }
+#     headers = None
+#     if tweaks:
+#         payload["tweaks"] = tweaks
+#     if api_key:
+#         headers = {"x-api-key": api_key}
+#     response = requests.post(api_url, json=payload, headers=headers)
+#     return response.json()
+
+# TODO:
+# 1. Copy and paste the necessary code from the langflow "Python Code" tab for the Flow: "Vectorize_app_5".
+#    Ensure to exclude the last two line of the provided code; these will be placed in a different section.
+# 2. Rename 'TWEAKS' to 'VECTORIZE_TWEAKS' dictionary with all required customizations specific to your flow needs.
+#    Ensure that API keys and endpoints in 'VECTORIZE_TWEAKS' are updated according to your environment.
 # Example:
 # from langflow.load import run_flow_from_json
-
-# TODO: Insert the tweaks structure for configuring your langflow flow.
-# This structure is used to customize various components of the flow,
-# such as API keys and response formats. Modify the dictionary below
-# as needed to fit your specific requirements.
-#
-# Example:
-# TWEAKS = {
-#   "Prompt-svuPA": {
-#       "template": """Answer the user as if you were a funny generative AI geek.
-#       User: {user_input}
-#
-#       Answer: """
-#   },
-#   "OpenAIModel-RhxsO": {
-#       "openai_api_key": st.secrets['OPENAI_API_KEY']
-#   },
-#   "ChatOutput-wHG84": {},
-#   "ChatInput-jLIhU": {}
+# VECTORIZE_TWEAKS = {
+#   "File-hx9qW": {},
+#   "RecursiveCharacterTextSplitter-JNwYQ": {},
+#   "AstraDB-2HgLU": {"api_endpoint": st.secrets['ASTRA_API_ENDPOINT'], "token": st.secrets['ASTRA_TOKEN']},
+#   "OpenAIEmbeddings-qgFd2": {"openai_api_key": st.secrets['OPENAI_API_KEY']}
 # }
 
 # Start with empty messages, stored in session state
@@ -40,7 +96,22 @@ with st.sidebar:
         uploaded_file = st.file_uploader('Upload a document for additional context', type=['pdf', 'txt', 'md', 'mdx', 'csv', 'json', 'yaml', 'yml', 'xml', 'html', 'htm', 'pdf', 'docx', 'py', 'sh', 'sql', 'js', 'ts', 'tsx'])
         submitted = st.form_submit_button('Save to Astra DB')
         if submitted:
-            print()
+            print(uploaded_file)
+            # Write to temporary file
+            temp_dir = tempfile.TemporaryDirectory()
+            file = uploaded_file
+            temp_filepath = os.path.join(temp_dir.name, file.name)
+            with open(temp_filepath, 'wb') as f:
+                f.write(file.getvalue())
+
+            # TODO:
+            # 1. Verify that the 'File-hx9qW' key exists in the 'VECTORIZE_TWEAKS' dictionary.
+            # 2. Copy and paste the necessary code from the langflow "Python Code" tab for the Flow: "Vectorize_app_5".
+            # Example:
+            # VECTORIZE_TWEAKS["File-hx9qW"]["path"] = temp_filepath
+            # output = run_flow_from_json(flow="Vectorize_app_5.json",
+            #                             input_value="message",
+            #                             tweaks=VECTORIZE_TWEAKS)
 
 # Draw all messages, both user and bot so far (every time the app reruns)
 for message in st.session_state.messages:
@@ -55,19 +126,12 @@ if question := st.chat_input("What's up?"):
     with st.chat_message('human'):
         st.markdown(question)
 
-# TODO: Ensure the 'run_flow_from_json' function is correctly imported from the langflow package.
-# Ensure that the 'BasicPrompting.json' file exists and is properly formatted according to langflow requirements.
-# Verify that 'TWEAKS' dictionary is defined with all necessary customizations for this flow.
-# Example:
-# from langflow.load import run_flow_from_json
-# Ensure 'question' variable is initialized with the user input that will be passed to the flow.
-#
-# Example of usage:
-# output = run_flow_from_json(flow="BasicPrompting.json",
-#                             input_value=question,
-#                             tweaks=TWEAKS)
-
-    answer = output[0].outputs[0].results
+    # TODO:
+    # 1. Invoke the run_flow function using the provided question, flow_id, and tweaks.
+    # 2. Capture and process the output to extract the desired result.
+    # Example:
+    #     output = run_flow(message=question, flow_id=FLOW_ID, tweaks=TWEAKS)
+    #     answer = output['outputs'][0]['outputs'][0]['results']['result']
 
     # Store the bot's answer in a session object for redrawing next time
     st.session_state.messages.append({"role": "ai", "content": answer})
