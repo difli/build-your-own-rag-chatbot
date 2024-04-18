@@ -223,7 +223,7 @@ chain = inputs | prompt | chat_model
 response = chain.invoke({'question': question})
 answer = response.content
 ```
-Check out the complete code in [app_4.py](./app_4.py).
+Check out the complete code in [app_4.py](./app_4_complete.py).
 
 Before we continue, we have to provide the `OPENAI_API_KEY` in `./streamlit/secrets.toml`. There is an example provided in `secrets.toml.example`:
 
@@ -239,7 +239,7 @@ pip install openai tiktoken astrapy langchain langchain_openai langchain-communi
 
 Now run the app:
 ```bash
-streamlit run app_4.py
+streamlit run app_4_complete.py
 ```
 
 You can now start your questions-and-answer interaction with the Chatbot. Of course, as there is no integration with the Astra DB Vector Store, there will not be contextualized answers. As there is no streaming built-in yet, please give the agent a bit of time to come up with the complete answer at once.
@@ -347,11 +347,11 @@ with st.chat_message('assistant'):
     response_placeholder = st.empty()
 ```
 
-Check out the complete code in [app_6.py](./app_6.py).
+Check out the complete code in [app_6.py](./app_4_complete.py).
 
 And run the app:
 ```bash
-streamlit run app_6.py
+streamlit run app_4_complete.py
 ```
 
 Now you'll see that the response will be written in real-time to the browser window.
