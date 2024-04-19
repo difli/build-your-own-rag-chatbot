@@ -1,20 +1,18 @@
-# Build your own RAG Chatbot
-Welcome to this workshop to build and deploy your own Chatbot using Retrieval Augmented Generation with Astra DB and the OpenAI Chat Model.
+# Build Your Own RAG Chatbot with LangFlow
 
-It leverages [DataStax RAGStack](https://docs.datastax.com/en/ragstack/docs/index.html), which is a curated stack of the best open-source software for easing implementation of the RAG pattern in production-ready applications that use Astra Vector DB or Apache Cassandra as a vector store.
+Welcome to this innovative workshop where you will build and deploy your own Chatbot using Retrieval Augmented Generation and LangFlow. This session allows you to integrate cutting-edge AI technologies seamlessly, simplifying the development process and enabling you to focus more on creativity and functionality.
 
 ![codespace](./assets/chatbot.png)
 
-What you'll learn:
-- 🤩 How to leverage [DataStax RAGStack](https://docs.datastax.com/en/ragstack/docs/index.html) for production-ready use of the following components:
-    - 🚀 The [Astra DB Vector Store](https://db.new) for Semantic Similarity search
-    - 🦜🔗 [LangChain](https://www.langchain.com) for linking OpenAI and Astra DB
-- 🤖 How to use [OpenAI's Large Language Models](https://platform.openai.com/docs/models) for Q&A style chatbots
-- 👑 How to use [Streamlit](https://streamlit.io) to easily deploy your awesome app to the internet for everyone to see!
+**What you'll learn:**
+- 🚀 **Advanced Vector Search with Astra DB:** Harness the power of [Astra DB's vector search](https://astra.datastax.com) to enhance chatbot responses.
+- 🦜🔗 **LangFlow:** Utilize [LangFlow](https://www.langflow.com) to bridge LLM models with Astra DB, enabling rapid prototyping and fast path to production.
+- 🤖 **Use of OpenAI's Large Language Models:** Explore [OpenAI's language models](https://platform.openai.com/docs/models) for generating natural and relevant chatbot conversations.
+- 👑 **Streamlit Deployment:** Learn to deploy your chatbot on the web using [Streamlit](https://streamlit.io), for real-time user interaction.
 
 - Slides of the presentation can be found [HERE](assets/meetups-slides.pdf)
 
-
+Langflow leverages [DataStax RAGStack](https://docs.datastax.com/en/ragstack/docs/index.html), which is a curated stack of the best open-source software for easing implementation of the RAG pattern in production-ready applications that use Astra Vector DB or Apache Cassandra as a vector store.
 
 ## 1️⃣ Prerequisites
 This workshop assumes you have access to:
@@ -66,8 +64,8 @@ You'll learn:
 ## 3️⃣ Open this tutorial on Github Codespaces
 To make life easier, we'll use the awesome Github Codespace functionality. Github offers you a completely integrated developer experience and resources to get started quickly. How?
 
-1. Open the [build-your-own-rag-agent](https://github.com/michelderu/build-your-own-rag-agent) repository
-2. Click on `Use this template`->`Ceate new repository` as follows:
+1. Open the [build-your-own-rag-agent](https://github.com/difli/build-your-own-rag-agent/tree/langflow-openai) repository
+2. Click on `Use this template`->`Ceate new repository`. **ENSURE YOU CHECK "Include all branches**:
 
     ![codespace](./assets/create-new-repository.png)
 
@@ -75,12 +73,20 @@ To make life easier, we'll use the awesome Github Codespace functionality. Githu
 
     ![codespace](./assets/repository-name.png)
 
-4. Cool! You just created a copy in your own Gihub account! Now let's get started with coding. Click `Create codespace on main` as follows:
+4. Cool! You just created a copy in your own Gihub account! **Important: Switch the branch to 'langflow-openai'**
+
+    ![codespace](./assets/switch-branch.png)
+
+5. Now let's get started with coding. Click `Create codespace on langflow-openai` as follows:
 
     ![codespace](./assets/create-codespace.png)
+    
+    This will set up your GitHub Codespace environment. It comes fully equipped with everything you'll need for the duration of the workshop. Please allow a few minutes for your environment to be ready.
 
-And you're ready to rock and roll! 🥳  
-As Codespaces creates your dev environment based on `Python 3.11`, it will automatically install the Python dependecies from `requirements.txt`. So, no need to `pip install` anything here. It will also set up prt forwarding so you can access subsequent Streamlit apps from anywhere.  
+    ![codespace](./assets/setting-up-codespaces.png)
+
+And you're ready to rock and roll! 🥳
+As Codespaces creates your dev environment based on `Python 3.10`, it will automatically install the Python dependecies from `requirements.txt`. So, no need to `pip install` anything here. It will also set up port forwarding so you can access subsequent Streamlit apps from anywhere.  
 When the codespace start up, it will run a Streamlit Hello World app for you which shows some of the awesome capabilities of this UI framework. When you're done playing, just click `ctrl-c` in the `terminal` to stop running it.
 
 ## 4️⃣ Getting started with Streamlit to build an app
@@ -120,9 +126,11 @@ Simple, isn't it? 🤩
 ## 5️⃣ Add a Chatbot interface to the app
 
 In this step we'll start preparing the app to allow for chatbot interaction with a user. We'll use the following Streamlit components:
-1. 
-2. `st.chat_input` in order for a user to allow to enter a question
+
+1. `st.chat_input` in order for a user to allow to enter a question
+
 2. `st.chat_message('human')` to draw the user's input
+
 3. `st.chat_message('assistant')` to draw the chatbot's response
 
 This results in the following code:
@@ -178,9 +186,8 @@ streamlit run app_3.py
 
 Now add multiple questions and you'll see these are redraw to the screen every time Streamlit reruns. 👍
 
-## 7️⃣ Now for the cool part! Let's integrate with the OpenAI Chat Model 🤖
+## 7️⃣ Now for the cool part! Let's get familiar with Langflow 🤖
 
-Here we'll link back to the work we did using the Colab Notebook and integrate the question with a call to the OpenAI Chat Model.
 
 Remember that Streamlit reruns the code everytime a user interacts? Because of this we'll make use of data and resource caching in Streamlit so that a connection is only set-up once. We'll use `@st.cache_data()` and `@st.cache_resource()` to define caching. `cache_data` is typically used for data structures. `cache_resource` is mostly used for resources like databases.
 
