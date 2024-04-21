@@ -1,4 +1,4 @@
-# Build Your Own RAG Chatbot with LangFlow
+# Build Your Own RAG Chatbot with Langflow
 
 Welcome to this innovative workshop where you will build and deploy your own Chatbot using Retrieval Augmented Generation and LangFlow. This session allows you to integrate cutting-edge AI technologies seamlessly, simplifying the development process and enabling you to focus more on creativity and functionality.
 
@@ -6,7 +6,7 @@ Welcome to this innovative workshop where you will build and deploy your own Cha
 
 **What you'll learn:**
 - 🚀 **Advanced Vector Search with Astra DB:** Harness the power of [Astra DB's vector search](https://astra.datastax.com) to enhance chatbot responses.
-- 🦜🔗 **LangFlow:** Utilize [LangFlow](https://www.langflow.com) to bridge LLM models with Astra DB, enabling rapid prototyping and fast path to production.
+- 🦜🔗 **Langflow:** Utilize [Langflow](https://www.langflow.com) to bridge LLM models with Astra DB, enabling rapid prototyping and fast path to production.
 - 🤖 **Use of OpenAI's Large Language Models:** Explore [OpenAI's language models](https://platform.openai.com/docs/models) for generating natural and relevant chatbot conversations.
 - 👑 **Streamlit Deployment:** Learn to deploy your chatbot on the web using [Streamlit](https://streamlit.io), for real-time user interaction.
 
@@ -188,122 +188,153 @@ Now add multiple questions and you'll see these are redraw to the screen every t
 
 ## 7️⃣ Now for the cool part! Let's get familiar with Langflow 🤖
 
+Start Langflow with:
+```bash
+python -m langflow run
+```
+Click the 'Open in Browser' button.
 
-Remember that Streamlit reruns the code everytime a user interacts? Because of this we'll make use of data and resource caching in Streamlit so that a connection is only set-up once. We'll use `@st.cache_data()` and `@st.cache_resource()` to define caching. `cache_data` is typically used for data structures. `cache_resource` is mostly used for resources like databases.
+![codespace](./assets/open-langflow-browser.png)
 
-This results in the following code to set up the Prompt and Chat Model:
+This brings up the Langflow UI.
+
+![codespace](./assets/langflow.png)
+
+Click the 'New Project' button.
+
+![codespace](./assets/langflow-new-project.png)
+
+Select the "Basic Prompting (Hello, World) template.
+
+![codespace](./assets/langflow-basic-prompting.png)
+
+Isn't that great? That is our first flow. This flow is composed of some Langflow core components, which are connected to each other. It starts with the 'Chat Input' on the left, which flows into the 'Prompt.' The 'Prompt' then flows into the LLM. In this case, it is an OpenAI LLM, but it could also be any other LLM listed under Models on the left-hand side. Finally, the LLM completion goes into the 'Chat Output.'
+
+**Crucial to grasp:** Behind the Langflow components is [Langchain](https://python.langchain.com/docs/get_started/introduction/) code. Langchain is a leading framework for developing applications powered by large language models. Langflow greatly simplifies the development of these applications by offering a no-code development platform that abstracts away the Langchain code with the Langflow components.  
+
+Let's run our Flow in the Langflow UI. Before we do that, we need to provide some additional details. The detail we need is the OpenAI API key. 
+
+![codespace](./assets/langflow-openai-apikey.png)
+
+First, let's check if the flow is valid. Click the play button in the 'Chat Output' component.
+
+![codespace](./assets/langflow-play.png)
+
+The play buttons of the components should turn into check marks to indicate that the flow is valid.
+
+Let's run the flow with the integrated chat UI in Langflow. Simply hit the 'Run' button.
+
+![codespace](./assets/langflow-run-button.png)
+
+This opens the interaction panel. Engage in a conversation with your LLM, behaving like a pirate. Feel free to adjust the prompt to see how it changes the LLM's response.
+
+![codespace](./assets/langflow-interaction-panel.png)
+
+Isn't that incredibly simple? Imagine how this facilitates creativity and the implementation of generative AI applications. You didn’t have to write any code to implement a chatbot using Langflow.
+
+## 8️⃣ Integrate our flow into our Streamlit application.
+
+Now things become really interesting! In this step, we'll integrate the flow into the Streamlit application that we built in the previous sections.
+
+Langflow offers a number of options for integrating flows into applications. We are going to explore two options:
+1. Leveraging the Langflow API via REST calls from our application.
+2. Embedding Langflow into our application.
+
+We will go for option 1 now but also try option 2 later.
+
+**Important for the next steps:** There are 'app_4_initial.py' and 'app_4_complete.py'. Copy and paste the code provided by the Langflow UI into 'app_4_initial.py', and use 'app_5_complete.py' as a reference to ensure the code is inserted in the correct location within your application.
+
+Click the '</> API' button.
+
+![codespace](./assets/langflow-api.png)
+
+Click the 'Python API' tab.
+
+![codespace](./assets/langflow-python-api.png)
+
+The provided Python code snippet integrates the chatbot application with Langflow using the REST API. This code enables the sending of chat messages to a specified flow and the retrieval of responses. It imports necessary modules, sets up the base API URL, flow ID, and includes some optional tweaks for the components in the flow.
 
 ```python
-# Cache prompt for future runs
-@st.cache_data()
-def load_prompt():
-    template = """You're a helpful AI assistent tasked to answer the user's questions.
-You're friendly and you answer extensively with multiple sentences. You prefer to use bulletpoints to summarize.
+import requests
+from typing import Optional
 
-QUESTION:
-{question}
+BASE_API_URL = "https://upgraded-space-waffle-vjp77wr4wqr36wj5-7860.app.github.dev/api/v1/run"
+FLOW_ID = "5a56173b-61d6-4f34-a3ec-318df82e3538"
+# You can tweak the flow by adding a tweaks dictionary
+# e.g {"OpenAI-XXXXX": {"model_name": "gpt-4"}}
+TWEAKS = {
+  "Prompt-EMif2": {},
+  "OpenAIModel-b3rzC": {},
+  "ChatOutput-MryQY": {},
+  "ChatInput-u0PY2": {}
+}
 
-YOUR ANSWER:"""
-    return ChatPromptTemplate.from_messages([("system", template)])
-prompt = load_prompt()
+def run_flow(message: str,
+  flow_id: str,
+  output_type: str = "chat",
+  input_type: str = "chat",
+  tweaks: Optional[dict] = None,
+  api_key: Optional[str] = None) -> dict:
+    """
+    Run a flow with a given message and optional tweaks.
 
-# Cache OpenAI Chat Model for future runs
-@st.cache_resource()
-def load_chat_model():
-    return ChatOpenAI(
-        temperature=0.3,
-        model='gpt-3.5-turbo',
-        streaming=True,
-        verbose=True
-    )
-chat_model = load_chat_model()
+    :param message: The message to send to the flow
+    :param flow_id: The ID of the flow to run
+    :param tweaks: Optional tweaks to customize the flow
+    :return: The JSON response from the flow
+    """
+    api_url = f"{BASE_API_URL}/{flow_id}"
+
+    payload = {
+        "input_value": message,
+        "output_type": output_type,
+        "input_type": input_type,
+    }
+    headers = None
+    if tweaks:
+        payload["tweaks"] = tweaks
+    if api_key:
+        headers = {"x-api-key": api_key}
+    response = requests.post(api_url, json=payload, headers=headers)
+    return response.json()
+
+# Setup any tweaks you want to apply to the flow
+message = "message"
+
+print(run_flow(message=message, flow_id=FLOW_ID, tweaks=TWEAKS))
 ```
 
-Instead of the static answer we used in the previous examples, we'll now switch to calling the Chain:
-
-```python
-# Generate the answer by calling OpenAI's Chat Model
-inputs = RunnableMap({
-    'question': lambda x: x['question']
-})
-chain = inputs | prompt | chat_model
-response = chain.invoke({'question': question})
-answer = response.content
-```
-Check out the complete code in [app_4.py](./app_4_complete.py).
-
-Before we continue, we have to provide the `OPENAI_API_KEY` in `./streamlit/secrets.toml`. There is an example provided in `secrets.toml.example`:
+Before we continue, we need to provide the OPENAI_API_KEY in ./streamlit/secrets.toml. Rename secrets.toml.example to secrets.toml and enter the credentials:
 
 ```toml
 # OpenAI secrets
-OPENAI_API_KEY = "<YOUR-API-KEY>"
+OPENAI_API_KEY = "<YOUR-OPENAI_API_KEY>"
 ```
 
-To get this application started locally you'll need to install several dependencies as follows (not needed in Codespaces):
+Look in `app_4_initial.py` for TODO #1 and:
+1. Copy and paste the necessary code from the Langflow Python API tab. Exclude the last two lines of the provided code; these will be used elsewhere.
+2. Ensure the `TWEAKS` dictionary is fully configured with all required customizations specific to your flow needs. See `app_4_complete.py` for what TWEAK details need to be configured. Feel free to also play with the prompt template.
+
+Look in `app_4_initial.py` for TODO #2:
+1. Invoke the `run_flow` function using the provided question, `flow_id`, and `tweaks`.
+2. Capture and process the output to extract the desired result.
+
+And run the app:
 ```bash
-pip install openai tiktoken astrapy langchain langchain_openai langchain-community
+streamlit run app_4_initial.py
 ```
 
-Now run the app:
-```bash
-streamlit run app_4_complete.py
-```
+![codespace](./assets/langflow-app-4.png)
 
-You can now start your questions-and-answer interaction with the Chatbot. Of course, as there is no integration with the Astra DB Vector Store, there will not be contextualized answers. As there is no streaming built-in yet, please give the agent a bit of time to come up with the complete answer at once.
+Wasn't that easy! The chatbot code does not contain any specific generative AI code. This was all accomplished by defining the flow with Langflow. The application leverages the flow, passes the question to it, and the output from the flow is the answer.
 
-Let's start with the question:
+## 9️⃣ Integrate our flow into our Streamlit application.
 
-    What does Daniel Radcliffe get when he turns 18?
+The ultimate goal of course is to add your own company's context to the agent. 
 
-As you will see, you'll receive a very generic answer without the information that is available in the CNN data.
+Now things become even more exciting! In this step, we'll implement a full-blown chatbot application that leverages RAG (Retrieval Augmented Generation) to answer questions based on the context we upload into the chatbot.
 
-## 8️⃣ Combine with the Astra DB Vector Store for additional context
-
-Now things become really interesting! In this step we'll integrate the Astra DB Vector Store in order to provide context in real-time for the Chat Model. Steps taken to implement Retrieval Augmented Generation:
-1. User asks a question
-2. A semantic similarity search is run on the Astra DB Vector Store
-3. The retrieved context is provided to the Prompt for the Chat Model
-4. The Chat Model comes back with an answer, taking into account the retrieved context
-
-We will reuse the data we inserted thanks to the notebook.
-
-![data-explorer](./assets/data-explorer.png)
-
-In order to enable this, we first have to set up a connection to the Astra DB Vector Store:
-
-```python
-# Cache the Astra DB Vector Store for future runs
-@st.cache_resource(show_spinner='Connecting to Astra')
-def load_retriever():
-    # Connect to the Vector Store
-    vector_store = AstraDB(
-        embedding=OpenAIEmbeddings(),
-        collection_name="my_store",
-        api_endpoint=st.secrets['ASTRA_API_ENDPOINT'],
-        token=st.secrets['ASTRA_TOKEN']
-    )
-
-    # Get the retriever for the Chat Model
-    retriever = vector_store.as_retriever(
-        search_kwargs={"k": 5}
-    )
-    return retriever
-retriever = load_retriever()
-```
-
-The only other thing we need to do is alter the Chain to include a call to the Vector Store:
-
-```python
-# Generate the answer by calling OpenAI's Chat Model
-inputs = RunnableMap({
-    'context': lambda x: retriever.get_relevant_documents(x['question']),
-    'question': lambda x: x['question']
-})
-```
-
-Check out the complete code in [app_5.py](./app_5.py).
-
-Before we continue, we have to provide the `ASTRA_API_ENDPOINT` and `ASTRA_TOKEN` in `./streamlit/secrets.toml`. There is an example provided in `secrets.toml.example`:
+Before we continue, we need to provide the ASTRA_API_ENDPOINT and ASTRA_TOKEN in ./streamlit/secrets.toml.:
 
 ```toml
 # Astra DB secrets
@@ -311,120 +342,143 @@ ASTRA_API_ENDPOINT = "<YOUR-API-ENDPOINT>"
 ASTRA_TOKEN = "<YOUR-TOKEN>"
 ```
 
+Upload the flows.json file from your repo folder into your Langflow instance.
+Click 'Upload Collection' in your Langflow UI.
+
+![codespace](./assets/langflow-upload-collection.png)
+
+You should now have the flows 'Chat_app_5' and 'Vectorize_app_5' in your collection.
+
+Our chatbot is based on these two flows. 
+
+- 'Vectorize_app_5' is the flow used to vectorize our context and store it in Astra DB, our vector store. 
+  ![codespace](./assets/langflow-vectorize-flow.png)
+- Chat_app_5' is the flow through which our question passes to retrieve similar context from the Astra DB vector store and to provide the question and context to the LLM to answer the question.
+  ![codespace](./assets/langflow-chat-flow.png)
+
+Click on 'Edit Flow' for 'Chat_app_5'.
+
+![codespace](./assets/langflow-chat-app-edit-flow.png)
+
+Click the '</> API' button.
+
+![codespace](./assets/langflow-api.png)
+
+Click the 'Python API' tab.
+
+![codespace](./assets/langflow-python-api.png)
+
+The provided Python code snippet integrates the chatbot application with Langflow using the REST API. This code enables the sending of chat messages to a specified flow and the retrieval of responses. It imports necessary modules, sets up the base API URL, flow ID, and includes some optional tweaks for the components in the flow.
+
+```python
+import requests
+from typing import Optional
+
+BASE_API_URL = "http://127.0.0.1:7860/api/v1/run"
+FLOW_ID = "589cb5ee-ace6-440d-a885-bc0e9ef41636"
+# You can tweak the flow by adding a tweaks dictionary
+# e.g {"OpenAI-XXXXX": {"model_name": "gpt-4"}}
+TWEAKS = {
+  "ChatInput-Ed0w6": {},
+  "TextOutput-vVPoH": {},
+  "OpenAIEmbeddings-kl45J": {},
+  "OpenAIModel-4A6FX": {},
+  "Prompt-t8lIV": {},
+  "ChatOutput-5ifqe": {},
+  "AstraDBSearch-7tbUz": {}
+}
+
+def run_flow(message: str,
+  flow_id: str,
+  output_type: str = "chat",
+  input_type: str = "chat",
+  tweaks: Optional[dict] = None,
+  api_key: Optional[str] = None) -> dict:
+    """
+    Run a flow with a given message and optional tweaks.
+
+    :param message: The message to send to the flow
+    :param flow_id: The ID of the flow to run
+    :param tweaks: Optional tweaks to customize the flow
+    :return: The JSON response from the flow
+    """
+    api_url = f"{BASE_API_URL}/{flow_id}"
+
+    payload = {
+        "input_value": message,
+        "output_type": output_type,
+        "input_type": input_type,
+    }
+    headers = None
+    if tweaks:
+        payload["tweaks"] = tweaks
+    if api_key:
+        headers = {"x-api-key": api_key}
+    response = requests.post(api_url, json=payload, headers=headers)
+    return response.json()
+
+# Setup any tweaks you want to apply to the flow
+message = "message"
+
+print(run_flow(message=message, flow_id=FLOW_ID, tweaks=TWEAKS))
+```
+
+Look in `app_5_initial.py` for TODO #1 and:
+1. Copy and paste the necessary code from the Langflow Python API tab. Exclude the last two lines of the provided code; these will be used elsewhere.
+2. Ensure the `TWEAKS` dictionary is fully configured with all required customizations specific to your flow needs. See `app_5_complete.py` for what TWEAK details need to be configured. 
+
+Look in `app_5_initial.py` for TODO #2:
+1. Invoke the `run_flow` function using the provided question, `flow_id`, and `tweaks`.
+2. Capture and process the output to extract the desired result.
+
+Let's integrate the next flow. Click on 'Edit Flow' for 'Vectorize_app_5' in the 'My Collection' view.
+
+![codespace](./assets/langflow-vectorize-app-edit-flow.png)
+
+Click the '</> API' button.
+
+![codespace](./assets/langflow-api.png)
+
+Click this time the 'Python Code' tab.
+
+![codespace](./assets/langflow-python-code.png)
+
+The provided Python code snippet embeds the chat flow directly into our chatbot application. This code facilitates the sending of chat messages to the chat flow, imports necessary modules, and includes some optional tweaks for the components in the flow.
+
+```python
+from langflow.load import run_flow_from_json
+TWEAKS = {
+  "File-hx9qW": {},
+  "RecursiveCharacterTextSplitter-JNwYQ": {},
+  "AstraDB-2HgLU": {},
+  "OpenAIEmbeddings-qgFd2": {}
+}
+
+result = run_flow_from_json(flow="Vectorize_app_5.json",
+                            input_value="message",
+                            tweaks=TWEAKS)
+```
+
+Look in `app_5_initial.py` for TODO #3 and:
+1. Copy and paste the necessary code from the langflow "Python Code" tab for the Flow: "Vectorize_app_5". Ensure to exclude the last two line of the provided code; these will be placed in a different section.
+2. Rename 'TWEAKS' to 'VECTORIZE_TWEAKS' dictionary with all required customizations specific to your flow needs. Ensure that API keys and endpoints in 'VECTORIZE_TWEAKS' are updated according to your environment.
+
+Look in `app_5_initial.py` for TODO #4:
+1. Verify that the 'File-hx9qW' key exists in the 'VECTORIZE_TWEAKS' dictionary.
+2. Copy and paste the necessary code from the langflow "Python Code" tab for the Flow: "Vectorize_app_5".
+
 And run the app:
 ```bash
-streamlit run app_5.py
+streamlit run app_5_initial.py
 ```
 
-Let's again ask the question:
+![codespace](./assets/langflow-app-5.png)
 
-    What does Daniel Radcliffe get when he turns 18?
+Wasn't that easy! The chatbot code does not contain any specific generative AI code. This was all accomplished by defining the flow with Langflow. The application leverages the flow, passes the question to it, and the output from the flow is the answer.
 
-As you will see, now you'll receive a very contextual answer as the Vector Store provides relevant CNN data to the Chat Model.
-
-## 9️⃣ Finally, let's make this a streaming app
-
-How cool would it be to see the answer appear on the screen as it is generated! Well, that's easy.
-
-First of all, we'll create a Streaming Call Back Handler that is called on every new token generation as follows:
-
-```python
-# Streaming call back handler for responses
-class StreamHandler(BaseCallbackHandler):
-    def __init__(self, container, initial_text=""):
-        self.container = container
-        self.text = initial_text
-
-    def on_llm_new_token(self, token: str, **kwargs):
-        self.text += token
-        self.container.markdown(self.text + "▌")
-```
-
-Then we explain the Chat Model to make user of the StreamHandler:
-
-```python
-response = chain.invoke({'question': question}, config={'callbacks': [StreamHandler(response_placeholder)]})
-```
-
-The `response_placeholer` in the code above defines the place where the tokens need to be written. We can create that space by callint `st.empty()` as follows:
-
-```python
-# UI placeholder to start filling with agent response
-with st.chat_message('assistant'):
-    response_placeholder = st.empty()
-```
-
-Check out the complete code in [app_6.py](./app_4_complete.py).
-
-And run the app:
-```bash
-streamlit run app_4_complete.py
-```
-
-Now you'll see that the response will be written in real-time to the browser window.
 
 ## 1️⃣0️⃣ Now let's make magic happen! 🦄
 
-The ultimate goal of course is to add your own company's context to the agent. In order to do this, we'll add an upload box that allows you to upload PDF files which will then be used to provide a meaningfull and contextual response!
-
-First we need an upload form which is simple to create with Streamlit:
-
-```python
-# Include the upload form for new data to be Vectorized
-with st.sidebar:
-    with st.form('upload'):
-        uploaded_file = st.file_uploader('Upload a document for additional context', type=['pdf'])
-        submitted = st.form_submit_button('Save to Astra DB')
-        if submitted:
-            vectorize_text(uploaded_file)
-```
-
-Now we need a function to load the PDF and ingest it into Astra DB while vectorizing the content.
-
-```python
-# Function for Vectorizing uploaded data into Astra DB
-def vectorize_text(uploaded_file, vector_store):
-    if uploaded_file is not None:
-        
-        # Write to temporary file
-        temp_dir = tempfile.TemporaryDirectory()
-        file = uploaded_file
-        temp_filepath = os.path.join(temp_dir.name, file.name)
-        with open(temp_filepath, 'wb') as f:
-            f.write(file.getvalue())
-
-        # Load the PDF
-        docs = []
-        loader = PyPDFLoader(temp_filepath)
-        docs.extend(loader.load())
-
-        # Create the text splitter
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size = 1500,
-            chunk_overlap  = 100
-        )
-
-        # Vectorize the PDF and load it into the Astra DB Vector Store
-        pages = text_splitter.split_documents(docs)
-        vector_store.add_documents(pages)  
-        st.info(f"{len(pages)} pages loaded.")
-```
-
-Check out the complete code in [app_7.py](./app_7.py).
-
-To get this application started locally you'll need to install the PyPDF dependency as follows (not needed in Codespaces):
-```bash
-pip install pypdf
-```
-
-And run the app:
-```bash
-streamlit run app_7.py
-```
-
-Now upload a PDF document (the more the merrier) that is relevant to you and start asking questions about it. You'll see that the answers will be relevant, meaningful and contextual! 🥳 See the magic happen!
-
-![end-result](./assets/end-result.png)
 
 ## 1️⃣1️⃣ Let's deploy this cool stuff to Streamlit cloud!
 In this step we'll deploy your awesome app to the internet so everyone can enjoy your cool work and be amazed!
