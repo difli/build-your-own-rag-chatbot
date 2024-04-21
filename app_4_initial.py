@@ -1,6 +1,6 @@
 import streamlit as st
 
-# TODO:
+# TODO #1:
 # 1. Copy and paste the necessary code from the langflow Python API tab.
 #    Exclude the last two lines of the provided code; these will be used elsewhere.
 # 2. Ensure the 'TWEAKS' dictionary is fully configured with all required customizations
@@ -75,7 +75,7 @@ if question := st.chat_input("What's up?"):
     with st.chat_message('human'):
         st.markdown(question)
 
-# TODO:
+# TODO #2:
 # 1. Invoke the run_flow function using the provided question, flow_id, and tweaks.
 # 2. Capture and process the output to extract the desired result.
 # Example:

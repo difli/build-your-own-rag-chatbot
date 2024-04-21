@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import tempfile
 
-# TODO:
+# TODO #1:
 # 1. Copy and paste the necessary code from the langflow Python API tab for the Flow: "Chat_app_5".
 #    Exclude the last two lines of the provided code; these will be used elsewhere.
 # 2. Ensure the 'TWEAKS' dictionary is fully configured with all required customizations
@@ -64,7 +64,7 @@ def run_flow(message: str,
     response = requests.post(api_url, json=payload, headers=headers)
     return response.json()
 
-# TODO:
+# TODO #3:
 # 1. Copy and paste the necessary code from the langflow "Python Code" tab for the Flow: "Vectorize_app_5".
 #    Ensure to exclude the last two line of the provided code; these will be placed in a different section.
 # 2. Rename 'TWEAKS' to 'VECTORIZE_TWEAKS' dictionary with all required customizations specific to your flow needs.
@@ -101,7 +101,7 @@ with st.sidebar:
             with open(temp_filepath, 'wb') as f:
                 f.write(file.getvalue())
 
-            # TODO:
+            # TODO #4:
             # 1. Verify that the 'File-hx9qW' key exists in the 'VECTORIZE_TWEAKS' dictionary.
             # 2. Copy and paste the necessary code from the langflow "Python Code" tab for the Flow: "Vectorize_app_5".
             # Example:
@@ -123,7 +123,7 @@ if question := st.chat_input("What's up?"):
     with st.chat_message('human'):
         st.markdown(question)
 
-    # TODO:
+    # TODO #2:
     # 1. Invoke the run_flow function using the provided question, flow_id, and tweaks.
     # 2. Capture and process the output to extract the desired result.
     # Example:
