@@ -1,4 +1,6 @@
 # pip3 install -r requirements.txt
 streamlit
 pypdf
-langflow==1.0.0a23
+ragstack-ai
+#requests
+#langflow==1.0.0a23
