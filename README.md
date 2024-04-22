@@ -1,6 +1,6 @@
 # Build Your Own RAG Chatbot with Langflow
 
-Welcome to this innovative workshop where you will build and deploy your own Chatbot using Retrieval Augmented Generation and LangFlow. This session allows you to integrate cutting-edge AI technologies seamlessly, simplifying the development process and enabling you to focus more on creativity and functionality.
+Welcome to this innovative workshop where you will build and deploy your own Chatbot using Retrieval Augmented Generation powered by Astra DB and LangFlow. This session allows you to integrate cutting-edge AI technologies seamlessly, simplifying the development process and enabling you to focus more on creativity and functionality.
 
 ![codespace](./assets/chatbot.png)
 
@@ -12,15 +12,13 @@ Welcome to this innovative workshop where you will build and deploy your own Cha
 
 - Slides of the presentation can be found [HERE](assets/meetups-slides.pdf)
 
-Langflow leverages [DataStax RAGStack](https://docs.datastax.com/en/ragstack/docs/index.html), which is a curated stack of the best open-source software for easing implementation of the RAG pattern in production-ready applications that use Astra Vector DB or Apache Cassandra as a vector store.
-
 ## 1️⃣ Prerequisites
 This workshop assumes you have access to:
 1. [A Github account](https://github.com)
 2. [Google Colab](https://colab.research.google.com/)
 
 During the course, you'll gain access to the following by signing up for free:
-1. [DataStax Astra DB](https://astra.datastax.com) (you can sign up through your Github account)
+1. [DataStax Astra DB](https://astra.datastax.com) (you can sign up through your Github account, in case you have a private Github account sign up with your Google account)
 2. [OpenAI account](https://platform.openai.com/signup) (you can sign up through your Github account)
 3. [Streamlit](https://streamlit.io) to deploy your amazing app (you can sign up through your Github account)
 
