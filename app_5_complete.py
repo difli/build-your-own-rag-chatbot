@@ -3,18 +3,12 @@ import os
 import tempfile
 
 # TODO #1:
-# 1. Copy and paste the necessary code from the langflow Python API tab for the Flow: "Chat_app_5".
-#    Exclude the last two lines of the provided code; these will be used elsewhere.
+# 1. Copy and paste the necessary code from the langflow Python Code tab for the Flow: "Chat_app_5".
+#    Exclude the last line of the provided code; this will be used elsewhere.
 # 2. Ensure the 'TWEAKS' dictionary is fully configured with all required customizations
 #    specific to your flow needs.
 # Example:
-import requests
-from typing import Optional
-
-BASE_API_URL = "http://127.0.0.1:7861/api/v1/run"
-FLOW_ID = "589cb5ee-ace6-440d-a885-bc0e9ef41636"
-# You can tweak the flow by adding a tweaks dictionary
-# e.g {"OpenAI-XXXXX": {"model_name": "gpt-4"}}
+from langflow.load import run_flow_from_json
 
 TWEAKS = {
   "ChatInput-Ed0w6": {},
@@ -35,35 +29,6 @@ YOUR ANSWER:"""},
   "AstraDBSearch-7tbUz": {"api_endpoint": st.secrets['ASTRA_API_ENDPOINT'], "token": st.secrets['ASTRA_TOKEN']}
 }
 
-def run_flow(message: str,
-  flow_id: str,
-  output_type: str = "chat",
-  input_type: str = "chat",
-  tweaks: Optional[dict] = None,
-  api_key: Optional[str] = None) -> dict:
-    """
-    Run a flow with a given message and optional tweaks.
-
-    :param message: The message to send to the flow
-    :param flow_id: The ID of the flow to run
-    :param tweaks: Optional tweaks to customize the flow
-    :return: The JSON response from the flow
-    """
-    api_url = f"{BASE_API_URL}/{flow_id}"
-
-    payload = {
-        "input_value": message,
-        "output_type": output_type,
-        "input_type": input_type,
-    }
-    headers = None
-    if tweaks:
-        payload["tweaks"] = tweaks
-    if api_key:
-        headers = {"x-api-key": api_key}
-    response = requests.post(api_url, json=payload, headers=headers)
-    return response.json()
-
 # TODO #3:
 # 1. Copy and paste the necessary code from the langflow "Python Code" tab for the Flow: "Vectorize_app_5".
 #    Ensure to exclude the last two line of the provided code; these will be placed in a different section.
@@ -71,6 +36,7 @@ def run_flow(message: str,
 #    Ensure that API keys and endpoints in 'VECTORIZE_TWEAKS' are updated according to your environment.
 # Example:
 from langflow.load import run_flow_from_json
+
 VECTORIZE_TWEAKS = {
   "File-hx9qW": {},
   "RecursiveCharacterTextSplitter-JNwYQ": {},
@@ -124,11 +90,11 @@ if question := st.chat_input("What's up?"):
         st.markdown(question)
 
     # TODO #2:
-    # 1. Invoke the run_flow function using the provided question, flow_id, and tweaks.
+    # 1. Invoke the run_flow_from_json function using the flow, question, and tweaks.
     # 2. Capture and process the output to extract the desired result.
     # Example:
-    output = run_flow(message=question, flow_id=FLOW_ID, tweaks=TWEAKS)
-    answer = output['outputs'][0]['outputs'][0]['results']['result']
+    output = run_flow_from_json(flow="Chat_app_5.json", input_value=question, tweaks=TWEAKS)
+    answer = output[0].outputs[0].results
 
     # Store the bot's answer in a session object for redrawing next time
     st.session_state.messages.append({"role": "ai", "content": answer})

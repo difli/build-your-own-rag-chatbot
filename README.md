@@ -89,9 +89,7 @@ When the codespace start up, it will run a Streamlit Hello World app for you whi
 
 ## 4️⃣ Getting started with Streamlit to build an app
 
-Let us now build a real application we will use the following architecture
-
-![steps](./assets/steps.png)
+Let us now build a real application.
 
 In this workshop we'll use Streamlit which is an amazingly simple to use framework to create front-end web applications.
 
@@ -326,9 +324,7 @@ streamlit run app_4_initial.py
 
 Wasn't that easy! The chatbot code does not contain any specific generative AI code. This was all accomplished by defining the flow with Langflow. The application leverages the flow, passes the question to it, and the output from the flow is the answer.
 
-## 9️⃣ Integrate our flow into our Streamlit application.
-
-The ultimate goal of course is to add your own company's context to the agent. 
+## 9️⃣ Implement a Full-Blown Retrieval-Augmented Generation (RAG) Chatbot.
 
 Now things become even more exciting! In this step, we'll implement a full-blown chatbot application that leverages RAG (Retrieval Augmented Generation) to answer questions based on the context we upload into the chatbot.
 

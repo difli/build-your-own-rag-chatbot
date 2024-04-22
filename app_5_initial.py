@@ -8,19 +8,20 @@ import tempfile
 # 2. Ensure the 'TWEAKS' dictionary is fully configured with all required customizations
 #    specific to your flow needs.
 # Example:
-# import requests
-# from typing import Optional
+# TODO #1:
+# 1. Copy and paste the necessary code from the langflow Python Code tab for the Flow: "Chat_app_5".
+#    Exclude the last line of the provided code; this will be used elsewhere.
+# 2. Ensure the 'TWEAKS' dictionary is fully configured with all required customizations
+#    specific to your flow needs.
+# Example:
+# from langflow.load import run_flow_from_json
 #
-# BASE_API_URL = "http://127.0.0.1:7861/api/v1/run"
-# FLOW_ID = "2d0074dc-4994-4259-9c96-0184ed31f25e"
-# # You can tweak the flow by adding a tweaks dictionary
-# # e.g {"OpenAI-XXXXX": {"model_name": "gpt-4"}}
 # TWEAKS = {
-#   "ChatInput-QH9Vn": {},
-#   "TextOutput-rOdzu": {},
-#   "OpenAIEmbeddings-oyXOD": {"openai_api_key": st.secrets['OPENAI_API_KEY']},
-#   "OpenAIModel-1gPW2": {"openai_api_key": st.secrets['OPENAI_API_KEY']},
-#   "Prompt-6uVLA": {"template": """You're a helpful AI assistent tasked to answer the user's questions.
+#   "ChatInput-Ed0w6": {},
+#   "TextOutput-vVPoH": {},
+#   "OpenAIEmbeddings-kl45J": {"openai_api_key": st.secrets['OPENAI_API_KEY']},
+#   "OpenAIModel-4A6FX": {"openai_api_key": st.secrets['OPENAI_API_KEY']},
+#   "Prompt-t8lIV": {"template": """You're a helpful AI assistent tasked to answer the user's questions.
 # You're friendly and you answer extensively with multiple sentences. You prefer to use bulletpoints to summarize.
 #
 # CONTEXT:
@@ -30,42 +31,9 @@ import tempfile
 # {question}
 #
 # YOUR ANSWER:"""},
-#   "ChatOutput-OT9zk": {},
-#   "File-icQdf": {},
-#   "RecursiveCharacterTextSplitter-AbAFw": {},
-#   "AstraDBSearch-urw0f": {"api_endpoint": st.secrets['ASTRA_API_ENDPOINT'], "token": st.secrets['ASTRA_TOKEN']},
-#   "AstraDB-SpIGI": {"api_endpoint": st.secrets['ASTRA_API_ENDPOINT'], "token": st.secrets['ASTRA_TOKEN']},
-#   "OpenAIEmbeddings-wTu3X": {"openai_api_key": st.secrets['OPENAI_API_KEY']}
+#   "ChatOutput-5ifqe": {},
+#   "AstraDBSearch-7tbUz": {"api_endpoint": st.secrets['ASTRA_API_ENDPOINT'], "token": st.secrets['ASTRA_TOKEN']}
 # }
-#
-# def run_flow(message: str,
-#   flow_id: str,
-#   output_type: str = "chat",
-#   input_type: str = "chat",
-#   tweaks: Optional[dict] = None,
-#   api_key: Optional[str] = None) -> dict:
-#     """
-#     Run a flow with a given message and optional tweaks.
-#
-#     :param message: The message to send to the flow
-#     :param flow_id: The ID of the flow to run
-#     :param tweaks: Optional tweaks to customize the flow
-#     :return: The JSON response from the flow
-#     """
-#     api_url = f"{BASE_API_URL}/{flow_id}"
-#
-#     payload = {
-#         "input_value": message,
-#         "output_type": output_type,
-#         "input_type": input_type,
-#     }
-#     headers = None
-#     if tweaks:
-#         payload["tweaks"] = tweaks
-#     if api_key:
-#         headers = {"x-api-key": api_key}
-#     response = requests.post(api_url, json=payload, headers=headers)
-#     return response.json()
 
 # TODO #3:
 # 1. Copy and paste the necessary code from the langflow "Python Code" tab for the Flow: "Vectorize_app_5".
@@ -130,8 +98,8 @@ if question := st.chat_input("What's up?"):
     # 1. Invoke the run_flow function using the provided question, flow_id, and tweaks.
     # 2. Capture and process the output to extract the desired result.
     # Example:
-    #     output = run_flow(message=question, flow_id=FLOW_ID, tweaks=TWEAKS)
-    #     answer = output['outputs'][0]['outputs'][0]['results']['result']
+    # output = run_flow_from_json(flow="Chat_app_5.json", input_value=question, tweaks=TWEAKS)
+    # answer = output[0].outputs[0].results
 
     # Store the bot's answer in a session object for redrawing next time
     st.session_state.messages.append({"role": "ai", "content": answer})
